@@ -124,9 +124,62 @@
         .q-image { display: none; max-width: 50%; height: auto; margin: 25px auto 25px auto; border-radius: 12px; border: 1px solid var(--border); }
         .welcome-image { max-width: 100%; height: auto; margin: 30px auto; border-radius: 15px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2); border: 1px solid var(--border); }
         
-        .link-row { display: flex;                /* Aktivuje flexbox */justify-content: space-between; /* Roztiahne prvky na kraje */  align-items: center;          /* Zarovná ich zvislo na stred */ margin: 20px 0;               /* Odsadenie od ostatného textu */ }
-        .feedback-link { font-weight: bold; color: var(--primary); text-decoration: none;        /* Odstráni podčiarknutie */  }
-        .key-link { font-size: 1.0rem;            /* Zväčší kľúč, ak treba */  text-decoration: none; }
+        .link-row { display: flex; justify-content: space-between; align-items: center; margin: 20px 0; }
+        .feedback-link { font-weight: bold; color: var(--primary); text-decoration: none; }
+        .key-link { font-size: 1.0rem; text-decoration: none; }
+
+        /* ŠTÝLY PRE PREPÍNAČ AUTOMATICKÉHO POSUNU */
+        .auto-next-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: var(--border);
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
 
         /* ŠTÝLY PRE 3D ŠTATISTIKU */
         .stats-container { margin: 20px 0; display: flex; flex-direction: column; align-items: center; }
@@ -138,7 +191,6 @@
          
         @media (max-width: 600px) { .group-selection { grid-template-columns: 1fr; } .btn-main, .btn-errors { grid-column: span 1; } .stats-grid { grid-template-columns: 1fr; } }
     </style>
-    
 </head>
 <body>
     <div class="container">
@@ -176,30 +228,27 @@
         🔧 Napísať pripomienku k aplikácii autorovi
             </a>
             <br>
-            <a href="log.html" class="note";>
-            📜 Verzia 1.0 (Zoznam zmien)
+            <a href="log.html" class="note">
+            📜 Verzia 2.0 (Zoznam zmien)
             </a>
             <br>    
-            <div class="link-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-    </div>
-    <div style="text-align: left; margin: 15px 0;">
-    <a href="3820_85_prac._doba_vodicov.pdf" target="_blank" rel="noopener noreferrer" class="feedback-link">
-        📖 Nariadenie 3820_85 pracovná doba vodičov v PDF
-    </a>
-    </div>
+            
+            <div style="text-align: left; margin: 15px 0;">
+                <a href="3820_85_prac._doba_vodicov.pdf" target="_blank" rel="noopener noreferrer" class="feedback-link">
+                    📖 Nariadenie 3820_85 pracovná doba vodičov v PDF
+                </a>
+            </div>
 
-    <div class="link-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin: 15px 0;">
-    <a href="Testy_pre_KKV-C.pdf" target="_blank" rel="noopener noreferrer" class="feedback-link">
-        📖 Otázky KKV pre Nákladnú dopravu (2024) v PDF
-    </a>
-    <a href="odpovede_kkv_C.html" class="key-link">
-        🗝️
-    </a>
-    </div>
-
-</div>
+            <div class="link-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin: 15px 0;">
+                <a href="Testy_pre_KKV-C.pdf" target="_blank" rel="noopener noreferrer" class="feedback-link">
+                    📖 Otázky KKV pre Nákladnú dopravu (2024) v PDF
+                </a>
+                <a href="odpovede_kkv_C.html" class="key-link">
+                    🗝️
+                </a>
+            </div>
+        </div>
        
-
         <div id="info-screen" class="card" style="text-align: center;">
             <h2 style="color: var(--primary); margin-bottom: 25px;">Parametre skúšobného testu</h2>
             <div style="text-align: left; display: inline-block; background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; border: 1px solid var(--border);">
@@ -228,11 +277,18 @@
 
             <div class="nav-controls">
                 <button id="prev-btn" class="btn-nav" onclick="prevQuestion()" style="background: var(--primary);">← PREDCHÁDZAJÚCA</button>
-            
                 <button id="save-btn" class="btn-nav" onclick="toggleSave()" style="flex: 0; padding: 10px 15px; font-size: 1.2rem;">📌</button>
-            
                 <button id="next-btn" class="btn-nav" onclick="nextQuestion()" style="background: var(--primary);">NASLEDUJÚCA →</button>
-</div>
+            </div>
+
+            <!-- PRIDANÝ PREPÍNAČ DO HTML -->
+            <div class="auto-next-wrapper">
+                <label class="switch">
+                    <input type="checkbox" id="auto-next-toggle" onchange="toggleAutoNext()">
+                    <span class="slider"></span>
+                </label>
+                <label for="auto-next-toggle" style="cursor: pointer;">Automaticky prejsť na ďalšiu otázku po výbere</label>
+            </div>
         </div>
 
         <div id="results-screen" class="card" style="text-align: center;">
@@ -246,19 +302,17 @@
                 <div style="position: relative; width: 250px; height: 250px; margin-bottom: 20px;">
                     <canvas id="statsChart" width="250" height="250"></canvas>
                     <div id="donut-center" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100px; height: 100px; background: var(--card); border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; box-shadow: inset 0 5px 10px rgba(0,0,0,0.5), 0 5px 15px rgba(0,0,0,0.3); border: 2px solid var(--border);">
-                    <span style="font-size: 0.8rem; color: var(--text-dim);">CELKOVO</span>
-                    <span id="donut-score" style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">0%</span>
+                        <span style="font-size: 0.8rem; color: var(--text-dim);">CELKOVO</span>
+                        <span id="donut-score" style="font-size: 1.8rem; font-weight: 800; color: var(--primary);">0%</span>
+                    </div>
                 </div>
-            </div>
 
                 <div id="stats-legend" class="stats-grid" style="width: 100%; max-width: 600px;">
                 </div>
             </div> 
 
-
             <button class="btn-main btn-exam" onclick="goHome()" style="max-width: 300px;">NÁVRAT NA HLAVNÉ MENU</button>
         </div>
-        
     </div>
 
     <script src="Q&A_C.js"></script>
@@ -269,11 +323,11 @@
         let score = 0;
         let userAnswers = [];
         let isExamMode = false;
+        let isAutoNext = false;
         let reviewList = JSON.parse(localStorage.getItem('kkv_review_list')) || [];
         let timerInterval;
         let timeLeft = 90 * 60;
 
-        
         window.onload = () => {
             const oldErrors = JSON.parse(localStorage.getItem('kkv_errors')) || [];
             const oldSaved = JSON.parse(localStorage.getItem('kkv_saved')) || [];
@@ -290,16 +344,33 @@
                 document.body.classList.add('light-mode');
                 document.getElementById('theme-icon').innerText = '🌙';
             } else {
-        localStorage.setItem('theme', 'dark');
-    }
+                localStorage.setItem('theme', 'dark');
+            }
+
+            // Načítanie stavu prepínača z localStorage
+            const savedAutoNext = localStorage.getItem('kkv_auto_next');
+            if (savedAutoNext === 'true') {
+                isAutoNext = true;
+                const toggleEl = document.getElementById('auto-next-toggle');
+                if (toggleEl) toggleEl.checked = true;
+            }
+
             updateReviewButton(); 
-};
+        };
 
         function toggleTheme() {
             document.body.classList.toggle('light-mode');
             const isLight = document.body.classList.contains('light-mode');
             localStorage.setItem('theme', isLight ? 'light' : 'dark');
             document.getElementById('theme-icon').innerText = isLight ? '🌙' : '☀️';
+        }
+
+        function toggleAutoNext() {
+            const toggleEl = document.getElementById('auto-next-toggle');
+            if (toggleEl) {
+                isAutoNext = toggleEl.checked;
+                localStorage.setItem('kkv_auto_next', isAutoNext);
+            }
         }
 
         function showInfo() {
@@ -390,65 +461,62 @@
             document.getElementById('next-btn').innerText = (currentIndex === currentQuestions.length - 1) ? "DOKONČIŤ TEST" : "NASLEDUJÚCA →";
             
             updateProgress();
-
             updateSaveButton();
-
         }
 
-            function toggleSave() {
-                const q = currentQuestions[currentIndex];
-                const idx = q.originalIndex; // Jednotka je preč
-                if (reviewList.includes(idx)) {
-                    reviewList = reviewList.filter(i => i !== idx);
-                } else {
-                    reviewList.push(idx);
-                }
-    
-                localStorage.setItem('kkv_review_list', JSON.stringify(reviewList));
-                updateSaveButton();
-                updateReviewButton();
-}
+        function toggleSave() {
+            const q = currentQuestions[currentIndex];
+            const idx = q.originalIndex; 
+            if (reviewList.includes(idx)) {
+                reviewList = reviewList.filter(i => i !== idx);
+            } else {
+                reviewList.push(idx);
+            }
 
-            function updateSaveButton() {
-               const btn = document.getElementById('save-btn');
-               const q = currentQuestions[currentIndex];
-               const isSaved = reviewList.includes(q.originalIndex); 
+            localStorage.setItem('kkv_review_list', JSON.stringify(reviewList));
+            updateSaveButton();
+            updateReviewButton();
+        }
 
-                btn.style.background = isSaved ? 'var(--secondary)' : '#475569';
-                btn.title = isSaved ? "Uložené v zozname" : "Uložiť na zopakovanie";
-}
+        function updateSaveButton() {
+            const btn = document.getElementById('save-btn');
+            const q = currentQuestions[currentIndex];
+            const isSaved = reviewList.includes(q.originalIndex); 
 
-            function checkAnswer(selectedIdx) {
-                if (userAnswers[currentIndex] !== null) return;
-                const q = currentQuestions[currentIndex];
-                    userAnswers[currentIndex] = selectedIdx;
-                if (selectedIdx === q.correct) {
-                    score++;
-                } 
-                else {
+            btn.style.background = isSaved ? 'var(--secondary)' : '#475569';
+            btn.title = isSaved ? "Uložené v zozname" : "Uložiť na zopakovanie";
+        }
+
+        function checkAnswer(selectedIdx) {
+            if (userAnswers[currentIndex] !== null) return;
+            const q = currentQuestions[currentIndex];
+            userAnswers[currentIndex] = selectedIdx;
+            
+            if (selectedIdx === q.correct) {
+                score++;
+            } else {
                 if (!reviewList.includes(q.originalIndex)) {
                     reviewList.push(q.originalIndex);
                     localStorage.setItem('kkv_review_list', JSON.stringify(reviewList));
                 }
             }
-                // Tieto funkcie prekreslia farby a aktualizujú skóre na obrazovke
-                showQuestion();
-                calculateLiveScore();
-                updateReviewButton();
             
-                // Automatický posun na ďaľšiu otázku len pre časť Skúšobný test ---
-               if (isExamMode) {
-                    setTimeout(() => {
-               if (currentIndex < currentQuestions.length - 1) {
-                    currentIndex++;
-                showQuestion();
-                }
-                else {
-                showResults();
-                }
-                }, 1000); // 1000 miliseúnd je ideálny čas, aby si videl výsledok
+            showQuestion();
+            calculateLiveScore();
+            updateReviewButton();
+        
+            // Automatický posun IBA vtedy, ak je prepínač zapnutý
+            if (isAutoNext) {
+                setTimeout(() => {
+                    if (currentIndex < currentQuestions.length - 1) {
+                        currentIndex++;
+                        showQuestion();
+                    } else {
+                        showResults();
+                    }
+                }, 1000);
             }
-}
+        }
 
         function calculateLiveScore() {
             const answered = userAnswers.filter(a => a !== null).length;
@@ -466,29 +534,25 @@
 
         function showResults() {
             clearInterval(timerInterval);
-                document.getElementById('timer').style.display = 'none';
-                document.getElementById('quiz-screen').style.display = 'none';
-                document.getElementById('results-screen').style.display = 'block';
-    
-                const pct = Math.round((score / currentQuestions.length) * 100);
-                const status = document.getElementById('result-status');
-                const msg = document.getElementById('result-msg');
-    
-                // --- LOGIKA STRIKUTNÉHO HODNOTENIA ---
-                let passed = pct >= 70;
-                let failedReason = "";
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('results-screen').style.display = 'block';
 
-                if (isExamMode) {
+            const pct = Math.round((score / currentQuestions.length) * 100);
+            const status = document.getElementById('result-status');
+            const msg = document.getElementById('result-msg');
 
-                // Spočítame body za každú kategóriu (v teste je vždy 20 z každej)
+            let passed = pct >= 70;
+            let failedReason = "";
+
+            if (isExamMode) {
                 const catPoints = { A: 0, B: 0, C: 0, D: 0 };
-                    currentQuestions.forEach((q, idx) => {
-                const n = q.originalIndex + 1;
-                let g = (n <= 140) ? 'A' : (n <= 270) ? 'B' : (n <= 348) ? 'C' : 'D';
-                if (userAnswers[idx] === q.correct) catPoints[g]++;
+                currentQuestions.forEach((q, idx) => {
+                    const n = q.originalIndex + 1;
+                    let g = (n <= 140) ? 'A' : (n <= 270) ? 'B' : (n <= 348) ? 'C' : 'D';
+                    if (userAnswers[idx] === q.correct) catPoints[g]++;
                 });
 
-                // Kontrola: Musí byť aspoň 14 z 20 v každej skupine
                 const failedCats = [];
                 if (catPoints.A < 14) failedCats.push("A");
                 if (catPoints.B < 14) failedCats.push("B");
@@ -496,13 +560,13 @@
                 if (catPoints.D < 14) failedCats.push("D");
 
                 if (failedCats.length > 0) {
-                passed = false;
-                failedReason = `Nesplnili ste limit 70% v kategóriách: ${failedCats.join(", ")}.`;
+                    passed = false;
+                    failedReason = `Nesplnili ste limit 70% v kategóriách: ${failedCats.join(", ")}.`;
                 }
             }
 
             document.getElementById('final-score').innerText = `${score} / ${currentQuestions.length} (${pct}%)`;
-    
+
             if (passed) {
                 status.innerText = "🎉 TESTOM STE PREŠLI!";
                 status.style.color = "var(--secondary)";
@@ -515,141 +579,116 @@
                     : "Na úspešné zvládnutie potrebujete aspoň 70% správnych odpovedí.";
             }
             
-            drawStatistics(); // SPUSTENIE NOVEJ FUNKCIE
+            drawStatistics(); 
             updateErrorButton();
         }
 
-        // --- NOVÁ PSEUDO-3D FUNKCIA PRE GRAF A ŠTATISTIKU ---
         function drawStatistics() {
             const canvas = document.getElementById('statsChart');
             const ctx = canvas.getContext('2d');
             const legendDiv = document.getElementById('stats-legend');
     
-        // Vyčistíme canvas a legendu
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             legendDiv.innerHTML = '';
     
-          const centerX = canvas.width / 2;
-            const centerY = canvas.width / 2; // Keďže je to štvorec
+            const centerX = canvas.width / 2;
+            const centerY = canvas.width / 2; 
             const outerRadius = 110;
             const innerRadius = 55;
 
-        // Definuje skupiny s farbami, hranicami a popismi
             const groups = {
-            'A': { correct: 0, total: 0, color: '#3b82f6', label: 'Skupina A', limits: [0, 140] },
-            'B': { correct: 0, total: 0, color: '#10b981', label: 'Skupina B', limits: [141, 270] },
-            'C': { correct: 0, total: 0, color: '#f59e0b', label: 'Skupina C', limits: [271, 348] },
-            'D': { correct: 0, total: 0, color: '#ef4444', label: 'Skupina D', limits: [349, 413] }
-        };
+                'A': { correct: 0, total: 0, color: '#3b82f6', label: 'Skupina A', limits: [0, 140] },
+                'B': { correct: 0, total: 0, color: '#10b981', label: 'Skupina B', limits: [141, 270] },
+                'C': { correct: 0, total: 0, color: '#f59e0b', label: 'Skupina C', limits: [271, 348] },
+                'D': { correct: 0, total: 0, color: '#ef4444', label: 'Skupina D', limits: [349, 413] }
+            };
 
-    // Vypočítame úspešnosť v aktuálnom teste
-    currentQuestions.forEach((q, idx) => {
-        let g = '';
-        const n = q.originalIndex + 1;
-        if (n <= 140) g = 'A';
-        else if (n <= 270) g = 'B';
-        else if (n <= 348) g = 'C';
-        else g = 'D';
+            currentQuestions.forEach((q, idx) => {
+                let g = '';
+                const n = q.originalIndex + 1;
+                if (n <= 140) g = 'A';
+                else if (n <= 270) g = 'B';
+                else if (n <= 348) g = 'C';
+                else g = 'D';
 
-        groups[g].total++;
-        if (userAnswers[idx] === q.correct) {
-            groups[g].correct++;
-        }
-    });
+                groups[g].total++;
+                if (userAnswers[idx] === q.correct) {
+                    groups[g].correct++;
+                }
+            });
 
-    // Celková úspešnosť do stredu donut-u
-    const totalPct = Math.round((score / currentQuestions.length) * 100);
-    document.getElementById('donut-score').innerText = `${totalPct}%`;
-    document.getElementById('donut-score').style.color = (totalPct >= 70) ? 'var(--secondary)' : 'var(--error)';
+            const totalPct = Math.round((score / currentQuestions.length) * 100);
+            document.getElementById('donut-score').innerText = `${totalPct}%`;
+            document.getElementById('donut-score').style.color = (totalPct >= 70) ? 'var(--secondary)' : 'var(--error)';
 
-    // Nastavenie pre Pseudo-3D stíny a hĺbku
-    ctx.shadowBlur = 15;
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 8; // Stín posunutý dole pre pocit výšky
-
-    const cardColor = getComputedStyle(document.body).getPropertyValue('--card');
-
-    // Kreslenie 3D Donut grafu
-    let currentStartAngle = -0.5 * Math.PI; // Začneme na vrchu
-
-    Object.keys(groups).forEach(key => {
-        const group = groups[key];
-        
-        // Každá skupina má fixnú štvrtinu (90 stupňov = 0.5 * PI)
-        const totalSliceAngle = 0.5 * Math.PI; 
-        
-        // Vypočítame úspešnosť (ak nebola žiadna otázka, úspešnosť je 0)
-        const successPct = group.total > 0 ? (group.correct / group.total) : 0;
-        
-        // Skutočný uhol úspešnosti v rámci danej štvrtiny
-        const successAngle = totalSliceAngle * successPct;
-
-        // --- 1. KROK: Vykreslíme "tmavé pozadie" výseku (neúspech / podklad) ---
-        // Pre hĺbkový efekt
-        ctx.save();
-        ctx.shadowBlur = 0; // Vypneme hlavný stín
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, outerRadius, currentStartAngle, currentStartAngle + totalSliceAngle);
-        ctx.closePath();
-        // Použijeme farbu karty alebo tmavšiu verziu
-        ctx.fillStyle = 'rgba(25, 39, 61, 0.6)'; 
-        ctx.fill();
-        ctx.restore();
-
-        // --- 2. KROK: Vykreslíme farebný úspech s 3D stínom ---
-        if (successAngle > 0) {
-            ctx.save();
-            // Pridáme vnútorný stín pre pocit vystúpenia
             ctx.shadowBlur = 15;
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-            ctx.shadowOffsetY = 6;
-            
-            ctx.beginPath();
-            ctx.moveTo(centerX, centerY);
-            // Kreslíme len uhol úspešnosti
-            ctx.arc(centerX, centerY, outerRadius, currentStartAngle, currentStartAngle + successAngle);
-            ctx.closePath();
-            ctx.fillStyle = group.color;
-            ctx.fill();
-            ctx.restore();
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 8; 
+
+            let currentStartAngle = -0.5 * Math.PI; 
+
+            Object.keys(groups).forEach(key => {
+                const group = groups[key];
+                const totalSliceAngle = 0.5 * Math.PI; 
+                const successPct = group.total > 0 ? (group.correct / group.total) : 0;
+                const successAngle = totalSliceAngle * successPct;
+
+                ctx.save();
+                ctx.shadowBlur = 0; 
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, outerRadius, currentStartAngle, currentStartAngle + totalSliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = 'rgba(25, 39, 61, 0.6)'; 
+                ctx.fill();
+                ctx.restore();
+
+                if (successAngle > 0) {
+                    ctx.save();
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+                    ctx.shadowOffsetY = 6;
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.arc(centerX, centerY, outerRadius, currentStartAngle, currentStartAngle + successAngle);
+                    ctx.closePath();
+                    ctx.fillStyle = group.color;
+                    ctx.fill();
+                    ctx.restore();
+                }
+
+                ctx.save();
+                ctx.shadowBlur = 0; 
+                ctx.globalCompositeOperation = 'destination-out'; 
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.restore();
+
+                currentStartAngle += totalSliceAngle;
+
+                const groupPctLabel = Math.round(successPct * 100);
+                const item = document.createElement('div');
+                item.className = 'stat-item';
+                item.innerHTML = `
+                    <span class="stat-name">${group.label}: ${groupPctLabel}% (${group.correct}/${group.total})</span>
+                    <div class="stat-bar-bg">
+                        <div class="stat-bar-fill" style="width: ${groupPctLabel}%; background: ${group.color}"></div>
+                    </div>
+                `;
+                legendDiv.appendChild(item);
+            });
         }
-
-        // --- 3. KROK: Vykreslíme vnútorný "donut" kruh pre každú štvrtinu ---
-        // Vymažeme stred, aby vznikol prstenec
-        ctx.save();
-        ctx.shadowBlur = 0; // Vypneme stín
-        ctx.globalCompositeOperation = 'destination-out'; // "Guma"
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.restore();
-
-        // Posunieme uhol pre ďalšiu štvrtinu
-        currentStartAngle += totalSliceAngle;
-
-        // --- Pridanie popisu pod graf ---
-        const groupPctLabel = Math.round(successPct * 100);
-        const item = document.createElement('div');
-        item.className = 'stat-item';
-        item.innerHTML = `
-            <span class="stat-name">${group.label}: ${groupPctLabel}% (${group.correct}/${group.total})</span>
-            <div class="stat-bar-bg">
-                <div class="stat-bar-fill" style="width: ${groupPctLabel}%; background: ${group.color}"></div>
-            </div>
-        `;
-        legendDiv.appendChild(item);
-       });
-    }
 
         function goHome() { location.reload(); }
         
         function clearErrors() { 
             if (confirm("Naozaj chcete resetovať zoznam na opakovanie?")) { 
                 reviewList = []; 
-            localStorage.removeItem('kkv_review_list'); 
-            updateReviewButton(); 
+                localStorage.removeItem('kkv_review_list'); 
+                updateReviewButton(); 
             } 
         }
         
@@ -665,10 +704,6 @@
                 btn.style.display = 'none';
             }
         }
-    
     </script>
-
-
-        
 </body>
 </html>
